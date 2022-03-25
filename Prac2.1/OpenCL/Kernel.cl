@@ -12,9 +12,12 @@ __kernel void HelloWorld(__global int* argument1, __global int* argument2, __glo
 	//short calculation: work Item Number x argument 1 + argument 2
 	//TODO: perform the required calculation
 	printf("Hello World\n");
+	output = global_addr *arg1 + arg2;
 
 	//TODO: print the work item, work group and arguments
+	printf("Hi from work item: %i	work group: %i	Arg1: %i	Arg2: %i	Output: %i \n",global_addr,workGroupNum,arg1,arg2,output);
 	/*
+	
 	Expected Output:
 	Hi from work item: 0 	 work group:0 	 Arg1: 10 	 Arg2: 20 	 Output: 20 
 	Hi from work item: 1 	 work group:0 	 Arg1: 10 	 Arg2: 20 	 Output: 30 
@@ -37,10 +40,66 @@ __kernel void HelloWorld(__global int* argument1, __global int* argument2, __glo
 	
 	//barrier that stops all work items here until all work items in the work group have executed this function
 	barrier(CLK_LOCAL_MEM_FENCE);
-	
 	//adding the outputs for each group---------------------------------------------
 	int groupValue = 0;
-	//TODO: Add all the work items in each work group and output the work groups total 
+	//TODO: Add all the work items  in each work group and output the work groups total 
+
+	//to check through work items and group numbers 
+	if(workGroupNum == 0 && workItemNum == 0 )
+	{
+		//iterating through the work items 
+		for(int j = 0; j<4;++j)
+		{
+			//get the sum 
+			groupValue = groupValue + ((4*workGroupNum + j)*arg1 + arg2); 
+			barrier(CLK_LOCAL_MEM_FENCE);
+		}
+		//printing output statement
+		printf("groupValue: %i 	Work item: %i 	Work group: %i\n",groupValue,workItemNum,workGroupNum);
+	}
+	//to check through work items and group numbers 
+	else if(workGroupNum == 1 && workItemNum == 4)
+	{
+		//iterating through the work items 
+		for(int j = 0; j<4;++j)
+		{
+			//get the sum
+			groupValue = groupValue + ((4*workGroupNum + j)*arg1 + arg2);
+			barrier(CLK_LOCAL_MEM_FENCE);
+		}
+		//printing output statement
+		printf("groupValue: %i 	Work item: %i 	Work group: %i\n",groupValue,workItemNum,workGroupNum);
+	}
+
+	//to check through work items and group numbers 
+	else if(workGroupNum == 2 && workItemNum == 8)
+	{
+		//get the sum
+		//iterating through the work items 
+		for(int j = 0; j<4;++j)
+		{
+			groupValue = groupValue + ((4*workGroupNum + j)*arg1 + arg2);
+			barrier(CLK_LOCAL_MEM_FENCE);
+		}
+		//printing output statement
+		printf("groupValue: %i 	Work item: %i 	Work group: %i\n",groupValue,workItemNum,workGroupNum);
+	}
+
+	//to check through work items and group numbers 
+	else if(workGroupNum == 3 && workItemNum == 12)
+	{
+		//iterating through the work items 
+		for(int j = 0; j<4;++j)
+		{
+			//get the sum
+			groupValue = groupValue + ((4*workGroupNum + j)*arg1 + arg2);
+			barrier(CLK_LOCAL_MEM_FENCE);
+		}
+		//printing output statement
+		printf("groupValue: %i 	Work item: %i 	Work group: %i\n", groupValue,workItemNum,workGroupNum);
+	}
+	
+
 	//Expected output:
 	//groupValue: 300 	 Work item:4 	 Work group: 1 
 	//groupValue: 620 	 Work item:12 	 Work group: 3 
