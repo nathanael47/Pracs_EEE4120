@@ -54,7 +54,7 @@ void createRandomSquareMatrix(int Size, int* squareMatrix, bool displayMatrices)
 
 int main(void){
 
-
+	clock_t start, end;
 
 	//New code for prac 2.2
 	bool displayMatrices = true;
@@ -84,14 +84,17 @@ int main(void){
 	}
 	
 	//TODO: code your golden standard matrix multiplication here
+	start = clock(); 
 	for (int k = 0;k < Size;k++){
 		for(int i = 0;i<Size;i++){
 			for(int j = 0; j < Size;j++){
 				output[i+Size*k] += matrixA[i+Size*k]*matrixB[j];
-				printf(" %i %i \t",output[i+Size*k],i+ i+Size*k);
+				// printf(" %i %i \t",output[i+Size*k],i+ i+Size*k);
 			}	
+		}
 	} 
-		
+	end = clock();
+	printf ("Run Time: %0.8f sec \n",((float) end - start)/CLOCKS_PER_SEC);	
 	
 	
 	
