@@ -93,7 +93,7 @@ int main(void)
 	 
 	//Initialize Buffers, memory space the allows for communication between the host and the target device
 	//TODO: initialize matrixA_buffer, matrixB_buffer and output_buffer
-	cl_mem matrixA_buffer, matrixB_buffer, output_buffer;
+	cl_mem matrixA_buffer, matrixB_buffer, output_buffer, size_buffer;
 
 	// ***step 1*** Get the platform you want to use
 	//cl_int clGetPlatformIDs(cl_uint num_entries,
@@ -243,12 +243,13 @@ int main(void)
 	//			cl_int* errcode_ret);
 	
 	//TODO: create matrixA_buffer, matrixB_buffer and output_buffer, with clCreateBuffer()
-	matrixA_buffer = clCreateBuffer(context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,sizeof(int), &matrixA, &err);
+	matrixA_buffer = clCreateBuffer(context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,global_size*local_size*sizeof(int), &matrixA, &err);
 
-	matrixB_buffer = clCreateBuffer(context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,sizeof(int), &matrixB, &err);
+	matrixB_buffer = clCreateBuffer(context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,global_size*local_size*sizeof(int), &matrixB, &err);
 
 	output_buffer = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,global_size*local_size*sizeof(int), output, &err);
 
+	size_buffer = clCreateBuffer(context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,sizeof(int), &Size, &err);
 	//------------------------------------------------------------------------
 
 	//***Step 10*** create the arguments for the kernel (link these to the buffers set above, using the pointers for the respective buffers)
@@ -261,6 +262,7 @@ int main(void)
 	clSetKernelArg(kernel, 0, sizeof(cl_mem), &matrixA_buffer);
 	clSetKernelArg(kernel, 1, sizeof(cl_mem), &matrixB_buffer);
 	clSetKernelArg(kernel, 2, sizeof(cl_mem), &output_buffer);
+	clSetKernelArg(kernel, 3, sizeof(cl_mem), &size_buffer);
 	//------------------------------------------------------------------------
 
 	
@@ -287,14 +289,15 @@ int main(void)
 	printf("\nKernel check: %i \n",err4);
 
 	//------------------------------------------------------------------------
-
+	start = clock(); //start running clock
 	//***Step 12*** Allows the host to read from the buffer object 
 	err = clEnqueueReadBuffer(queue, output_buffer, CL_TRUE, 0, sizeof(output), output, 0, NULL, NULL);
 	
 	
 	//This command stops the program here until everything in the queue has been run
 	clFinish(queue);
-	
+	end = clock();
+	printf ("Run Time: %0.8f sec \n",((float) end - start)/CLOCKS_PER_SEC);
 	
 	//***Step 13*** Check that the host was able to retrieve the output data from the output buffer
 	
