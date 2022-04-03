@@ -22,7 +22,7 @@ __kernel void matrixMultiplication(__global int* inputMatrixA,__global int* inpu
 	if (localGroupID == 0){
 		for (int i = 0; i < sizes ; i++){
 			for (int j = 0; j < sizes ; j++){
-				output[workItemNum + i] += inputMatrixA[i] * inputMatrixB[j];
+				output[workItemNum + i] += inputMatrixA[i+workItemNum] * inputMatrixB[j];
 			}
 		}
 	} 
